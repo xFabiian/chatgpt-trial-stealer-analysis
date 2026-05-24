@@ -1,0 +1,41 @@
+# Malware samples — DO NOT commit actual binaries
+*.exe
+*.msi
+*.bin
+*.macho
+*.dylib
+*.dll
+*.so
+*.pyc
+*.o
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Scripts may download samples to these dirs — never commit
+samples/
+drops/
+malware/
+
+# Sensitive data — never commit real credentials, tokens, or PII
+*.env
+secrets/
+credentials/
+
+# Analysis artifacts (keep reports, delete memory dumps)
+*.dmp
+core.*
+*.vmem
+
+# Temporary analysis files
+*.tmp
+*.bak

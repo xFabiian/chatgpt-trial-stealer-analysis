@@ -1,0 +1,68 @@
+# Sigma Rule — ChatGPT Trial Stealer MSI Drop Detection
+# Detects the MSI installer dropping and executing batch files
+#
+# Author: Security Research — CC0 1.0
+# Date:   2026-05-24
+
+title: ChatGPT Trial Stealer - MSI Installer Drop and Custom Action
+id: d4e5f6a7-b8c9-0123-defa-456789012345
+status: experimental
+date: 2026-05-24
+modified: 2026-05-24
+description: >
+  Detects the MSI installer dropping files to LOCALAPPDATA and
+  executing the kilo_piece66.cmd Custom Action after installation.
+  The MSI is authored by "Alpha29" and built with msitools on Linux.
+references:
+  - https://github.com/xFabiian/chatgpt-trial-stealer-analysis
+author: Security Research
+tags:
+  - attack.execution
+  - attack.t1204.002
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_msiexec:
+    Image|endswith:
+      - 'msiexec.exe'
+    CommandLine|contains:
+      - '/i'
+      - 's.msi'
+      - '%temp%'
+
+  selection_cmd_drop:
+    Image|endswith:
+      - 'cmd.exe'
+    CommandLine|contains|all:
+      - 'lima26.ps1'
+      - 'kilo_piece'
+
+  selection_ps_hidden:
+    Image|endswith:
+      - 'powershell.exe'
+    CommandLine|contains|all:
+      - '-WindowStyle Hidden'
+      - '-NoProfile'
+      - '-ExecutionPolicy Bypass'
+
+  selection_nato_files:
+    TargetFilename|contains:
+      - '\kontakt8\'
+      - '\autotune\'
+      - '\zenology\'
+      - '\finalcut\'
+      - '\logicpro\'
+      - '\autotuneplugin\'
+
+  filter_legitimate:
+    # Filter: legitimate software with similar names (unlikely)
+    Image|contains:
+      - 'Native Instruments'
+      - 'Steinberg'
+      - 'Roland'
+
+  condition: (selection_msiexec or selection_cmd_drop or selection_ps_hidden) or (selection_nato_files and not filter_legitimate)
+falsepositives:
+  - Legitimate MSI installations to %TEMP% (rare with these specific names)
+level: high

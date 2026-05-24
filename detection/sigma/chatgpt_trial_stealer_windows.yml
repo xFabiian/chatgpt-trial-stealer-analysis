@@ -1,0 +1,75 @@
+# Sigma Rule — ChatGPT Trial Stealer Windows Detection
+# Detects the PowerShell-based Deno installation and Stage 2 launch
+#
+# Author: Security Research — CC0 1.0
+# Date:   2026-05-24
+# Ref:    https://github.com/YOUR-USERNAME/chatgpt-trial-stealer-analysis
+
+title: ChatGPT Trial Stealer - Deno Loader Execution via PowerShell
+id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+status: experimental
+date: 2026-05-24
+modified: 2026-05-24
+description: >
+  Detects execution of the ChatGPT Trial Stealer Windows payload.
+  The malware installs Deno via Scoop/WinGet and launches an obfuscated
+  JS loader from the C2 domain ms-telemetry-gateway-us.com.
+references:
+  - https://github.com/YOUR-USERNAME/chatgpt-trial-stealer-analysis
+author: Security Research
+tags:
+  - attack.execution
+  - attack.persistence
+  - attack.t1059.003  # Command and Scripting Interpreter: Windows Command Shell
+  - attack.t1546.001 # Event Triggered Execution: Change Default File Association
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_denolaunch:
+    CommandLine|contains|all:
+      - 'deno'
+      - '-A'
+      - 'ms-telemetry-gateway-us.com'
+
+  selection_denolaunch_ip:
+    CommandLine|contains|all:
+      - 'deno'
+      - '-A'
+      - '45.137.99.121'
+
+  selection_scoopdeno:
+    CommandLine|contains|all:
+      - 'scoop'
+      - 'install'
+      - 'deno'
+
+  selection_wingetdeno:
+    CommandLine|contains|all:
+      - 'winget'
+      - 'install'
+      - 'DenoLand.Deno'
+
+  selection_persistencerunkey:
+    CommandLine|contains|all:
+      - 'CurrentVersion'
+      - 'Run'
+      - 'deno'
+
+  filter_legitimate_deno:
+    # Filter: legitimate Deno development activity (no C2 URLs)
+    CommandLine|contains:
+      - 'deno.land'
+      - 'deno run'
+      - 'deno test'
+      - 'deno fmt'
+      - 'deno lint'
+      - 'deno bundle'
+      - 'deno compile'
+
+  condition: (selection_denolaunch or selection_denolaunch_ip) and not filter_legitimate_deno
+
+falsepositives:
+  - Legitimate Deno developers using deno -A with local scripts
+  - Security researchers analyzing this malware (use filter to exclude)
+level: critical

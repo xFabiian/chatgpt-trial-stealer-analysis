@@ -1,0 +1,50 @@
+# Sigma Rule — ChatGPT Trial Stealer PowerShell Stage 1.5
+# Detects the lima26.ps1 script execution pattern
+#
+# Author: Security Research — CC0 1.0
+# Date:   2026-05-24
+# Ref:    https://github.com/xFabiian/chatgpt-trial-stealer-analysis
+
+title: ChatGPT Trial Stealer - PowerShell Scoop and Deno Installation
+id: b2c3d4e5-f6a7-8901-bcde-f23456789012
+status: experimental
+date: 2026-05-24
+modified: 2026-05-24
+description: >
+  Detects the PowerShell script (lima26.ps1) that installs Scoop,
+  WinGet, and Deno, then executes the Stage 2 C2 loader.
+  This is the Stage 1.5 of the ChatGPT Trial Stealer infection chain.
+references:
+  - https://github.com/xFabiian/chatgpt-trial-stealer-analysis
+author: Security Research
+tags:
+  - attack.execution
+  - attack.t1059.001
+logsource:
+  category: ps_script
+  product: windows
+detection:
+  selection:
+    ScriptBlockText|contains|all:
+      - 'get.scoop.sh'
+      - 'DenoLand.Deno'
+      - 'ms-telemetry-gateway-us.com'
+
+  selection_alt:
+    ScriptBlockText|contains|all:
+      - 'Set-ExecutionPolicy'
+      - 'scoop install winget'
+      - 'winget install'
+      - 'deno'
+      - '-A'
+
+  filter_legitimate:
+    # Filter: legitimate developer activity
+    ScriptBlockText|contains:
+      - 'deno.land'
+      - 'deno test'
+
+  condition: (selection or selection_alt) and not filter_legitimate
+falsepositives:
+  - IT administrators setting up Deno via Scoop/WinGet (unlikely to include C2 URL)
+level: critical

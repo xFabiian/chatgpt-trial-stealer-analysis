@@ -1,0 +1,101 @@
+# Snort Rules — ChatGPT Trial Stealer C2 Communication
+#
+# Detects HTTP traffic to known C2 infrastructure
+# Compatible with Snort 2.9+ and Snort 3.x
+#
+# Author: Security Research — CC0 1.0
+# Date:   2026-05-24
+
+# === Stage 1: Drop Server (45.137.99.121) ===
+
+alert tcp $HOME_NET any -> 45.137.99.121 80 (
+    msg:"MALWARE ChatGPT Trial Stealer - Stage 1 Drop Server Connection";
+    flow:established,to_server;
+    content:"GET"; http_method;
+    pcre:"/\/(claude|tbot|autotune|finalcut|logicpro|kontakt8|zenology)/Ui";
+    classtype:trojan-activity;
+    sid:2026052410;
+    rev:1;
+    metadata:created_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+# === Stage 2: C2 Domain (ms-telemetry-gateway-us.com) ===
+
+alert tcp $HOME_NET any -> $EXTERNAL_NET 80 (
+    msg:"MALWARE ChatGPT Trial Stealer - C2 Domain Communication";
+    flow:established,to_server;
+    content:"Host: ms-telemetry-gateway-us.com"; http_header;
+    classtype:trojan-activity;
+    sid:2026052411;
+    rev:1;
+    metadata:created_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+alert tcp $HOME_NET any -> $EXTERNAL_NET 80 (
+    msg:"MALWARE ChatGPT Trial Stealer - Stage 2 JS Loader Download";
+    flow:established,to_server;
+    content:"GET"; http_method;
+    content:".js"; http_uri;
+    content:"Host: ms-telemetry-gateway-us.com"; http_header;
+    pcre:"/\/[a-f0-9]{16}\.js/U";
+    classtype:trojan-activity;
+    sid:2026052412;
+    rev:1;
+    metadata:created_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+# === C2 Auth Endpoints ===
+
+alert tcp $HOME_NET any -> $EXTERNAL_NET 80 (
+    msg:"MALWARE ChatGPT Trial Stealer - C2 Authentication Request";
+    flow:established,to_server;
+    content:"POST"; http_method;
+    content:"/auth/"; http_uri;
+    content:"Host: ms-telemetry-gateway-us.com"; http_header;
+    content:"Authorization: Bearer eyJ"; http_header;
+    content:"x-module-id:"; http_header;
+    classtype:trojan-activity;
+    sid:2026052413;
+    rev:1;
+    metadata:created_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+alert tcp $HOME_NET any -> $EXTERNAL_NET 80 (
+    msg:"MALWARE ChatGPT Trial Stealer - C2 Health Check";
+    flow:established,to_server;
+    content:"GET"; http_method;
+    content:"/health"; http_uri;
+    content:"Host: ms-telemetry-gateway-us.com"; http_header;
+    classtype:trojan-activity;
+    sid:2026052414;
+    rev:1;
+    metadata:created_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+# === Stage 3: Dynamic Payload Download ===
+
+alert tcp $HOME_NET any -> $EXTERNAL_NET 80 (
+    msg:"MALWARE ChatGPT Trial Stealer - Stage 3 Dynamic Payload Request";
+    flow:established,to_server;
+    content:"GET"; http_method;
+    content:".js"; http_uri;
+    content:"Host: ms-telemetry-gateway-us.com"; http_header;
+    content:"x-module-id:"; http_header;
+    classtype:trojan-activity;
+    sid:2026052415;
+    rev:1;
+    metadata:created_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+# === GitHub Lure URL ===
+
+alert tcp $HOME_NET any -> $EXTERNAL_NET 443 (
+    msg:"MALWARE ChatGPT Trial Stealer - GitHub Lure Raw Content Download";
+    flow:established,to_server;
+    content:"raw.githubusercontent.com"; http_header;
+    content:"/ai-gen-profi/chatgpt-trial-gen/"; http_uri;
+    classtype:trojan-activity;
+    sid:2026052416;
+    rev:1;
+    metadata:created_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)

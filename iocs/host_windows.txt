@@ -1,0 +1,69 @@
+# ============================================================
+# Windows Host IOCs — ChatGPT Trial Stealer
+# Generated: 2026-05-24
+# ============================================================
+
+# === Registry Keys ===
+
+# Persistenz (Run-Key)
+HKCU\Software\Microsoft\Windows\CurrentVersion\Run\<16-char-hex-hash>
+# Wert: "<pfad-zu-deno.exe> -A <pfad-zu-payload>.js"
+# Oder: "<pfad-zu-deno.exe> -A http://ms-telemetry-gateway-us.com/..."
+
+# Affiliate-Marker
+HKCU\Software\Alpha29\kontakt8\Installed = 1
+HKCU\Software\Alpha29\autotune\Installed = 1
+HKCU\Software\Alpha29\zenology\Installed = 1
+# Pattern: HKCU\Software\Alpha29\<buildNote>\Installed
+
+# === Dateien ===
+
+# MSI-Installer (initial drop)
+%TEMP%\s.msi
+
+# MSI-Installationsordner
+%LOCALAPPDATA%\kontakt8\lima26.ps1
+%LOCALAPPDATA%\kontakt8\kilo_piece66.cmd
+# Pattern: %LOCALAPPDATA%\<buildNote>\*.ps1
+# Pattern: %LOCALAPPDATA%\<buildNote>\*.cmd
+
+# Stage 2 Payload (JS, kopiert vom Loader)
+%TEMP%\<hex-hash>.js
+%LOCALAPPDATA%\<hex-hash>.js
+# Erkennungsmuster im Dateiinhalt:
+#   "proxyUrls"
+#   "buildId"
+#   "ms-telemetry-gateway-us.com"
+#   "acca66ea4f9f6efe"
+#   "Bearer eyJ"
+
+# Deno-Installation (durch Malware via Scoop/WinGet)
+%LOCALAPPDATA%\Microsoft\WinGet\Packages\DenoLand.Deno_*\deno.exe
+%USERPROFILE%\scoop\shims\deno.exe
+%USERPROFILE%\.deno\
+
+# === Netzwerk ===
+
+# TCP Port Lock (Single-Instance)
+TCP 2744 LISTENING (localhost)
+
+# === Prozesse ===
+
+# Prozessbaum der Infektion:
+# msiexec.exe
+#   └── explorer.exe "<installdir>\kilo_piece66.cmd"
+#         └── powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden
+#               └── powershell.exe ... -File "lima26.ps1"
+#                     └── deno.exe -A "http://ms-telemetry-gateway-us.com/..."
+
+# Laufende Persistenz:
+# deno.exe -A "<pfad>.js"                (Run-Key Start)
+# deno.exe run --allow-all --no-check    (Stage 3 Execution)
+
+# === MSI Metadaten ===
+# Author:    Alpha29
+# Subject:   echo_app15
+# Product:   kontakt8 / autotune / zenology / ...
+# Toolchain: msitools 0.106.31-bf14 (Linux)
+# GUID:      {D6A06351-197F-4E80-AFF8-4934A15016E4}
+# Upgrade:   {1F69983F-F912-4EA1-85B7-DAE9B0992E7E}

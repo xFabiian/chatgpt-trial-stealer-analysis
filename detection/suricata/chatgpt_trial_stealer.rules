@@ -1,0 +1,65 @@
+# Suricata Rule — ChatGPT Trial Stealer C2 Communication
+#
+# Detects HTTP traffic to known C2 infrastructure
+#
+# Author: Security Research — CC0 1.0
+# Date:   2026-05-24
+
+alert http any any -> $EXTERNAL_NET any (
+    msg:"MALWARE ChatGPT Trial Stealer - C2 Domain ms-telemetry-gateway-us.com";
+    flow:established,to_server;
+    content:"ms-telemetry-gateway-us.com";
+    http_header;
+    classtype:trojan-activity;
+    sid:2026052401;
+    rev:1;
+    metadata:created_at 2026-05-24, updated_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+alert http any any -> $EXTERNAL_NET 80 (
+    msg:"MALWARE ChatGPT Trial Stealer - Stage 2 Loader Download";
+    flow:established,to_server;
+    content:"GET"; http_method;
+    content:".js"; http_uri;
+    content:"ms-telemetry-gateway-us.com"; http_header;
+    classtype:trojan-activity;
+    sid:2026052402;
+    rev:1;
+    metadata:created_at 2026-05-24, updated_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+alert http any any -> $EXTERNAL_NET 80 (
+    msg:"MALWARE ChatGPT Trial Stealer - C2 Auth Endpoint";
+    flow:established,to_server;
+    content:"POST"; http_method;
+    content:"/auth/"; http_uri;
+    content:"ms-telemetry-gateway-us.com"; http_header;
+    content:"Bearer eyJ"; http_header;
+    classtype:trojan-activity;
+    sid:2026052403;
+    rev:1;
+    metadata:created_at 2026-05-24, updated_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+alert http $HOME_NET any -> $EXTERNAL_NET 80 (
+    msg:"MALWARE ChatGPT Trial Stealer - C2 Health Check";
+    flow:established,to_server;
+    content:"GET"; http_method;
+    content:"/health"; http_uri;
+    content:"Host: ms-telemetry-gateway-us.com"; http_header;
+    classtype:trojan-activity;
+    sid:2026052404;
+    rev:1;
+    metadata:created_at 2026-05-24, updated_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)
+
+alert http any any -> 45.137.99.121 any (
+    msg:"MALWARE ChatGPT Trial Stealer - Stage 1 Drop Server";
+    flow:established,to_server;
+    content:"GET"; http_method;
+    content:"/claude"; http_uri;
+    classtype:trojan-activity;
+    sid:2026052405;
+    rev:1;
+    metadata:created_at 2026-05-24, updated_at 2026-05-24, malware_family "ChatGPT-Trial-Stealer";
+)

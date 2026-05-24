@@ -1,0 +1,27 @@
+# ============================================================
+# File Hashes (SHA-256) — ChatGPT Trial Stealer Samples
+# Generated: 2026-05-24
+# ============================================================
+
+# === macOS Mach-O Stealer (Universal Binary, x86_64+arm64) ===
+
+# Build 2026-05-08 (674 KB, aeltere Version)
+062d5fc1cfa93e0ad53c985c896017c72acc9e22c889ba3b43c9e238d6d9721d  # claude (ChatGPT lure)
+8fe79f33e0d7e01a6c269fdf06a09c918ed66651d92bd5e2da4f8777ca8fd28c  # tbot   (Telegram lure)
+
+# Build 2026-05-16 (591 KB, neuere Version — 99.88% identisch, nur Config-Blob anders)
+086cb1b17b6e2a2b57651448026d2e7d9af7d463a1374c59ca407bc3f6222abc  # autotune (Auto-Tune lure)
+22c74438159f69394d18deb8d392daaa9fac09cf9c8c31bca53a80041b9bf12f  # finalcut (Final Cut Pro lure)
+d97f51850ed224f560b14d5004751a56a8acf27f079319c53dfc3aa170ba87f2  # logicpro (Logic Pro lure)
+f6dc17a584e1e933eac4ff31ddba4fffbc155b7da7c25be79aa3dbb7ab782205  # kontakt8 (NI Kontakt 8 lure)
+28da68972f3dd7fa7b15064994e5b4e83ed15328972c1674dbf84c7864171f87  # zenology (Roland Zenology lure)
+
+# === Windows MSI Wrappers (12.8 KB) ===
+c366c04c4646f96dd19d0fa37127c93e2c9620af75252714b5bd2e9efc7457c7  # kontakt8.msi
+82ad00845559e17e8926af26d384504ebffb998f3779906d529d96dcd5493123  # autotuneplugin.msi
+
+# === Stage 2 JavaScript Loader (obfuskiert, 16.9 KB) ===
+eefdd9558952183ed3d02a3e277fb8de410e73f08b9508e31642eefc033869f5  # acca66ea4f9f6efe.js (Deno loader)
+
+# === MD5 (fuer Legacy-Systeme) ===
+# 0ee4cdf06d2690db5d5cc0f0a3178edb  claude

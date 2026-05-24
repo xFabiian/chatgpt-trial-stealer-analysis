@@ -1,0 +1,40 @@
+# ============================================================
+# Network IOCs — ChatGPT Trial Stealer (MaaS / AMOS-variant)
+# Generated: 2026-05-24
+# ============================================================
+
+# === IPs ===
+45.137.99.121
+
+# === Domains ===
+ms-telemetry-gateway-us.com
+
+# === URLs (Stage 1 — Drop Server, Open Directory) ===
+http://45.137.99.121/claude
+http://45.137.99.121/tbot
+http://45.137.99.121/autotune
+http://45.137.99.121/finalcut
+http://45.137.99.121/logicpro
+http://45.137.99.121/kontakt8
+http://45.137.99.121/zenology
+http://45.137.99.121/kontakt8.msi
+http://45.137.99.121/autotuneplugin
+http://45.137.99.121/zenology.msi
+
+# === URLs (Stage 2 — Deno Loader / C2) ===
+http://ms-telemetry-gateway-us.com/acca66ea4f9f6efe.js
+http://ms-telemetry-gateway-us.com/health
+
+# === URLs (GitHub Lure) ===
+https://raw.githubusercontent.com/ai-gen-profi/chatgpt-trial-gen/main/gpt
+https://raw.githubusercontent.com/ai-gen-profi/chatgpt-trial-gen/main/gpt.msi
+https://github.com/ai-gen-profi/chatgpt-trial-gen
+
+# === C2 Endpoints (Pattern) ===
+# POST http://ms-telemetry-gateway-us.com/auth/*
+# GET  http://ms-telemetry-gateway-us.com/<uuid>.js
+
+# === JWT Identifiers (embedded in Stage 2) ===
+# buildId:  acca66ea4f9f6efe
+# userId:   600bf5e68c9cf61a
+# userNote: alex

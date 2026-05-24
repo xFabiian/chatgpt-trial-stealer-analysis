@@ -1,0 +1,66 @@
+# ============================================================
+# macOS Host IOCs — ChatGPT Trial Stealer
+# Generated: 2026-05-24
+# ============================================================
+
+# === Dateien (Mach-O Stealer Binary) ===
+
+# Primaere Drop-Locations
+$TMPDIR/claude
+$TMPDIR/tbot
+$TMPDIR/autotune
+$TMPDIR/finalcut
+$TMPDIR/logicpro
+$TMPDIR/kontakt8
+$TMPDIR/zenology
+~/Downloads/claude
+~/Downloads/tbot
+~/Desktop/claude
+
+# Dateieigenschaften:
+#   Typ:      Mach-O universal binary (x86_64 + arm64)
+#   Groesse:  591312 bytes (neuere Builds) oder 690528 bytes (aeltere Builds)
+#   Libs:     NUR libc++.1.dylib + libSystem.B.dylib
+#   Code-Sig: KEINE (unsigned, deshalb xattr -c noetig)
+#   Imports:  CCCrypt, CCKeyDerivationPBKDF, fork, setsid, popen, system,
+#             getpwuid, recursive_directory_iterator
+
+# === Prozesse ===
+
+# Stealer-Binary
+# Name: claude / tbot / autotune / finalcut / logicpro / kontakt8 / zenology
+# Parent: bash (von Terminal-Befehl)
+# Child: fork() -> setsid() (Daemonisierung)
+# Netzwerk: NICHT direkt — nutzt popen("curl ...") oder system("curl ...")
+
+# Deno-Loader (falls Windows-Variante auf Mac angepasst wurde)
+# deno -A http://ms-telemetry-gateway-us.com/...
+# TCP Port 2744 LISTENING
+
+# === Persistenz (zu pruefen) ===
+
+# LaunchAgents (Pattern — genauer Name variiert)
+~/Library/LaunchAgents/*.plist
+# Grep nach: ms-telemetry, 45.137.99, deno, acca66ea, buildId
+
+# LaunchDaemons (braucht root)
+/Library/LaunchDaemons/*.plist
+/Library/LaunchAgents/*.plist
+
+# Login Items
+# Systemeinstellungen > Allgemein > Anmeldeobjekte
+
+# Crontab
+# crontab -l | grep -E "ms-telemetry|45.137.99|deno|curl.*(claude|tbot)"
+
+# Shell Profile Injection
+# ~/.zshrc, ~/.bash_profile, ~/.bashrc, ~/.zprofile
+# Grep nach: ms-telemetry, 45.137.99, deno.*-A
+
+# === Binary-Signatur (Erkennung) ===
+# Mach-O Universal, 2 Slices
+# __cstring Sektion = 55 bytes (extrem klein, Strings verschluesselt)
+# __data erste 384 bytes: Entropie > 5.0 (verschluesselter Config-Blob)
+# Importiert: _CCCrypt, _CCKeyDerivationPBKDF, _popen, _system, _fork, _setsid
+# NICHT importiert: socket, connect, send, recv, dlopen
+# Verlinkte Libs: EXAKT 2 (libc++, libSystem)

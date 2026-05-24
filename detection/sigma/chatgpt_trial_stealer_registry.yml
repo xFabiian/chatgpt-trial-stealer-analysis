@@ -1,0 +1,48 @@
+# Sigma Rule — ChatGPT Trial Stealer Registry Persistence
+# Detects Run-Key persistence establishment
+#
+# Author: Security Research — CC0 1.0
+# Date:   2026-05-24
+
+title: ChatGPT Trial Stealer - Registry Run Key Persistence
+id: c3d4e5f6-a7b8-9012-cdef-345678901234
+status: experimental
+date: 2026-05-24
+modified: 2026-05-24
+description: >
+  Detects the establishment of Run-Key persistence by the ChatGPT
+  Trial Stealer. The malware writes a Deno execution command to
+  HKCU\Software\Microsoft\Windows\CurrentVersion\Run.
+references:
+  - https://github.com/xFabiian/chatgpt-trial-stealer-analysis
+author: Security Research
+tags:
+  - attack.persistence
+  - attack.t1547.001
+logsource:
+  category: registry_event
+  product: windows
+detection:
+  selection_denopersist:
+    TargetObject|contains:
+      - 'CurrentVersion\\Run'
+    Details|contains:
+      - 'deno'
+      - '-A'
+
+  selection_alphamarker:
+    TargetObject|contains:
+      - 'Software\\Alpha29'
+
+  selection_msidrop:
+    TargetObject|contains:
+      - 'Software\\Microsoft\\Windows\\CurrentVersion\\Run'
+    Details|contains:
+      - 'ms-telemetry'
+      - 'acca66ea'
+      - '.js'
+
+  condition: selection_denopersist or selection_alphamarker or selection_msidrop
+falsepositives:
+  - Legitimate Deno development with startup persistence (rare)
+level: high
